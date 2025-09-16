@@ -160,7 +160,7 @@ fun CadastroLivros(navController: NavController) {
                                 onFailure = { e -> mensagem = "❌ Erro: ${e.message}" }
                             )
                         } else {
-                            mensagem = "❌ Preencha todos os campos"
+                            mensagem = "❌ Preencha todos os campos."
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
