@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -127,7 +128,7 @@ fun CadastroLivros(navController: NavController) {
                             .padding(12.dp)
                     ) {
                         Icon(
-                            Icons.Filled.Delete,
+                            Icons.Filled.Logout,
                             contentDescription = "Logout",
                             tint = Color(0xFFD32F2F),
                             modifier = Modifier.size(24.dp)
