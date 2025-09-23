@@ -2,20 +2,27 @@ package com.pavani.livrosfirebase.view
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -57,27 +64,83 @@ fun CadastroLivros(navController: NavController) {
 
     val scope = rememberCoroutineScope()
     val dataSource = DataSource()
+    val auth = remember { com.pavani.livrosfirebase.datasource.Authentication() }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    "📚 Menu do App Livros",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                NavigationDrawerItem(
-                    label = { Text("Lista de Livros") },
-                    selected = false,
-                    onClick = { navController.navigate("ListaLivros") }
-                )
-                NavigationDrawerItem(
-                    label = { Text("Cadastro de Livros") },
-                    selected = true,
-                    onClick = { }
-                )
+            ModalDrawerSheet(modifier = Modifier.fillMaxHeight()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Menu,
+                            contentDescription = "Ícone do App",
+                            tint = Color(0xFF6200EE),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Menu do App Livros",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+
+                    Text(
+                        text = "👤 ${auth.getUserEmail()}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+
+                    NavigationDrawerItem(
+                        label = { Text("➕ Lista dos Livros") },
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("ListaLivros")
+                                drawerState.close()
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                auth.logout()
+                                navController.navigate("Login") {
+                                    popUpTo("CadastroLivros") { inclusive = true }
+                                }
+                            }
+                            .padding(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = "Logout",
+                            tint = Color(0xFFD32F2F),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Logout",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFD32F2F)
+                        )
+                    }
+                }
             }
         }
     ) {
@@ -100,7 +163,7 @@ fun CadastroLivros(navController: NavController) {
             },
             floatingActionButton = {
                 FloatingActionButton(onClick = { navController.navigate("ListaLivros")}) {
-                    Icon(Icons.Filled.Add, contentDescription = "Lista de Livros")
+                    Icon(Icons.Filled.Menu, contentDescription = "Lista de Livros")
                 }
             }
         ) {

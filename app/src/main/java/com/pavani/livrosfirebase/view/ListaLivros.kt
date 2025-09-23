@@ -24,6 +24,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListaLivros(navController: NavController) {
     val dataSource = DataSource()
+    val auth = remember { com.pavani.livrosfirebase.datasource.Authentication() }
+
     var listaLivros by remember { mutableStateOf(listOf<Map<String, Any>>()) }
     var mensagem by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -39,22 +41,79 @@ fun ListaLivros(navController: NavController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    "📚 Menu do App Livros",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                NavigationDrawerItem(
-                    label = { Text("Lista de Livros") },
-                    selected = true,
-                    onClick = { }
-                )
-                NavigationDrawerItem(
-                    label = { Text("Cadastro de Livros") },
-                    selected = false,
-                    onClick = { navController.navigate("CadastroLivros") }
-                )
+            ModalDrawerSheet(modifier = Modifier.fillMaxHeight()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Menu,
+                            contentDescription = "Ícone do App",
+                            tint = Color(0xFF6200EE),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Menu do App Livros",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+
+                    Text(
+                        text = "👤 ${auth.getUserEmail()}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+
+
+                    NavigationDrawerItem(
+                        label = { Text("➕ Cadastro de Livros") },
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                navController.navigate("CadastroLivros")
+                                drawerState.close()
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+
+
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                auth.logout()
+                                navController.navigate("Login") {
+                                    popUpTo("ListaLivros") { inclusive = true }
+                                }
+                            }
+                            .padding(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = "Logout",
+                            tint = Color(0xFFD32F2F),
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Logout",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFD32F2F)
+                        )
+                    }
+                }
             }
         }
     ) {
@@ -135,4 +194,3 @@ fun ListaLivros(navController: NavController) {
         }
     }
 }
-
